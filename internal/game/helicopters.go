@@ -1,10 +1,12 @@
 package game
 
 import (
+	"math"
 	"math/rand"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/vector"
 	"github.com/ystepanoff/paragopher/internal/config"
 	"github.com/ystepanoff/paragopher/internal/utils"
 )
@@ -25,6 +27,27 @@ func (g *Game) drawHelicopter(screen *ebiten.Image, h *Helicopter) {
 	}
 	op.GeoM.Translate(float64(h.x)-dx/2.0, float64(h.y)-dy/2.0)
 	screen.DrawImage(g.helicopterImage, op)
+
+	imgW := float32(dx)
+	bodyOffset := float32(config.HelicopterTailWidth) + float32(config.HelicopterBodyWidth)/2.0 - imgW/2.0
+	if !h.leftToRight {
+		bodyOffset = -bodyOffset
+	}
+	rotorCX := h.x + bodyOffset
+	rotorY := h.y - float32(dy)/2.0 + 1
+
+	phase := float64(time.Now().UnixMilli()) * 0.012
+	rotorHalfLen := float32(math.Abs(math.Cos(phase))) * float32(config.HelicopterRotorLen) / 2.0
+	if rotorHalfLen < 1.0 {
+		rotorHalfLen = 1.0
+	}
+
+	vector.StrokeLine(
+		screen,
+		rotorCX-rotorHalfLen, rotorY,
+		rotorCX+rotorHalfLen, rotorY,
+		1.0, config.ColourMagenta, false,
+	)
 }
 
 func (g *Game) drawHelicopters(screen *ebiten.Image) {

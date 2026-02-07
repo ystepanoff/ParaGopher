@@ -100,48 +100,72 @@ func (g *Game) initBulletImage() {
 
 func (g *Game) initHelicopterImage() {
 	w := int(config.HelicopterBodyWidth + config.HelicopterTailWidth)
-	h := int(config.HelicopterBodyHeight) + 6
+	h := int(config.HelicopterBodyHeight) + 12
 	g.helicopterImage = ebiten.NewImage(w, h)
-	tailX := float32(0.0)
-	tailY := float32(h-config.HelicopterTailHeight) / 2
+
+	bodyTopY := float32(6)
+	bodyH := float32(config.HelicopterBodyHeight)
 	bodyX := float32(config.HelicopterTailWidth)
-	bodyY := float32(h-config.HelicopterBodyHeight) / 2
+	bodyBottomY := bodyTopY + bodyH
+	bodyCenterX := bodyX + float32(config.HelicopterBodyWidth)/2.0
 
+	tailMidY := bodyTopY + bodyH/2.0
 	vector.DrawFilledRect(
 		g.helicopterImage,
-		tailX,
-		tailY,
-		config.HelicopterTailWidth,
-		config.HelicopterTailHeight,
-		config.ColourTeal,
-		false,
+		0, tailMidY-float32(config.HelicopterTailHeight)/2.0,
+		float32(config.HelicopterTailWidth), float32(config.HelicopterTailHeight),
+		config.ColourTeal, false,
 	)
 
-	vector.DrawFilledRect(
-		g.helicopterImage,
-		bodyX,
-		bodyY,
-		config.HelicopterBodyWidth,
-		config.HelicopterBodyHeight,
-		config.ColourTeal,
-		false,
-	)
-
-	bodyCenterX := bodyX + config.HelicopterBodyWidth/2.0
-	bodyTopY := bodyY
-	rotorStartX := bodyCenterX - config.HelicopterRotorLen/2.0
-	rotorStartY := bodyTopY - 2.0
-	rotorEndX := bodyCenterX + config.HelicopterRotorLen/2.0
-	rotorEndY := rotorStartY
 	vector.StrokeLine(
 		g.helicopterImage,
-		rotorStartX,
-		rotorStartY,
-		rotorEndX,
-		rotorEndY,
-		1.0,
-		config.ColourMagenta,
-		false,
+		1, tailMidY-4, 1, tailMidY+4,
+		1.0, config.ColourMagenta, false,
+	)
+
+	vector.DrawFilledRect(
+		g.helicopterImage,
+		bodyX, bodyTopY,
+		float32(config.HelicopterBodyWidth), bodyH,
+		config.ColourTeal, false,
+	)
+
+	cockpitX := bodyX + float32(config.HelicopterBodyWidth) - 9
+	vector.DrawFilledRect(
+		g.helicopterImage,
+		cockpitX, bodyTopY+2, 7, bodyH-4,
+		config.ColourPink, false,
+	)
+
+	vector.StrokeLine(
+		g.helicopterImage,
+		bodyCenterX, 1, bodyCenterX, bodyTopY,
+		1.5, config.ColourTeal, false,
+	)
+
+	vector.DrawFilledCircle(
+		g.helicopterImage,
+		bodyCenterX, 1, 1.5,
+		config.ColourTeal, true,
+	)
+
+	strutL := bodyX + 5
+	strutR := bodyX + float32(config.HelicopterBodyWidth) - 5
+	skidY := bodyBottomY + 4
+	vector.StrokeLine(
+		g.helicopterImage,
+		strutL, bodyBottomY, strutL, skidY,
+		1.0, config.ColourTeal, false,
+	)
+	vector.StrokeLine(
+		g.helicopterImage,
+		strutR, bodyBottomY, strutR, skidY,
+		1.0, config.ColourTeal, false,
+	)
+	vector.StrokeLine(
+		g.helicopterImage,
+		strutL-2, skidY, strutR+2, skidY,
+		1.0, config.ColourTeal, false,
 	)
 }
 
@@ -217,58 +241,203 @@ func (g *Game) initParatrooperImage() {
 	))
 	h := int(config.ParachuteRadius*2 + config.ParatrooperHeight)
 	g.paratrooperImage = ebiten.NewImage(w, h)
+
+	cw := float32(w)
+	canopyR := config.ParachuteRadius
+	canopyCX := cw / 2.0
+	canopyCY := canopyR
+
 	DrawFilledSemicircle(
 		g.paratrooperImage,
-		float32(w)/2.0,
-		config.ParachuteRadius,
-		config.ParachuteRadius,
-		-180.0,
-		0.0,
+		canopyCX, canopyCY, canopyR,
+		-180.0, 0.0,
 		config.ColourTeal,
 	)
+
+	bodyStartY := canopyR * 2.0
+	bodyCX := cw / 2.0
+
+	headR := float32(2.0)
+	headCY := bodyStartY + headR + 0.5
+	vector.DrawFilledCircle(
+		g.paratrooperImage,
+		bodyCX, headCY, headR,
+		config.ColourTeal, true,
+	)
+
+	torsoW := float32(4.0)
+	torsoH := float32(6.0)
+	torsoX := bodyCX - torsoW/2.0
+	torsoY := headCY + headR
 	vector.DrawFilledRect(
 		g.paratrooperImage,
-		(float32(w)-config.ParatrooperWidth)/2.0,
-		config.ParachuteRadius*2.0,
-		float32(w)-config.ParatrooperWidth,
-		float32(h),
-		config.ColourTeal,
-		false,
+		torsoX, torsoY, torsoW, torsoH,
+		config.ColourTeal, false,
+	)
+
+	shoulderY := torsoY + 1.5
+	leftHandX := bodyCX - 5.0
+	rightHandX := bodyCX + 5.0
+	handY := headCY - 1.5
+	vector.StrokeLine(
+		g.paratrooperImage,
+		torsoX, shoulderY,
+		leftHandX, handY,
+		1.5, config.ColourTeal, false,
 	)
 	vector.StrokeLine(
 		g.paratrooperImage,
-		2.0,
-		config.ParachuteRadius,
-		(float32(w)-config.ParatrooperWidth)/2.0+1.0,
-		config.ParachuteRadius*2.0,
-		1.0,
-		config.ColourTeal,
-		false,
+		torsoX+torsoW, shoulderY,
+		rightHandX, handY,
+		1.5, config.ColourTeal, false,
+	)
+
+	hipY := torsoY + torsoH
+	vector.StrokeLine(
+		g.paratrooperImage,
+		bodyCX-1.0, hipY,
+		bodyCX-2.5, float32(h),
+		1.5, config.ColourTeal, false,
 	)
 	vector.StrokeLine(
 		g.paratrooperImage,
-		float32(w)-2.0,
-		config.ParachuteRadius,
-		float32(w)-(float32(w)-config.ParatrooperWidth)/2.0-1.0,
-		config.ParachuteRadius*2.0,
-		1.0,
-		config.ColourTeal,
-		false,
+		bodyCX+1.0, hipY,
+		bodyCX+2.5, float32(h),
+		1.5, config.ColourTeal, false,
+	)
+
+	canopyBottomY := canopyCY
+	vector.StrokeLine(
+		g.paratrooperImage,
+		canopyCX-canopyR+2, canopyBottomY,
+		leftHandX, handY,
+		0.75, config.ColourTeal, false,
+	)
+	vector.StrokeLine(
+		g.paratrooperImage,
+		canopyCX+canopyR-2, canopyBottomY,
+		rightHandX, handY,
+		0.75, config.ColourTeal, false,
+	)
+	vector.StrokeLine(
+		g.paratrooperImage,
+		canopyCX-canopyR/3.0, canopyBottomY,
+		torsoX, shoulderY,
+		0.75, config.ColourTeal, false,
+	)
+	vector.StrokeLine(
+		g.paratrooperImage,
+		canopyCX+canopyR/3.0, canopyBottomY,
+		torsoX+torsoW, shoulderY,
+		0.75, config.ColourTeal, false,
 	)
 }
 
 func (g *Game) initParatrooperLandedImage() {
-	g.paratrooperLandedImage = ebiten.NewImage(
-		int(config.ParatrooperWidth),
-		int(config.ParatrooperHeight),
+	w := int(config.ParatrooperWidth)
+	h := int(config.ParatrooperHeight)
+	g.paratrooperLandedImage = ebiten.NewImage(w, h)
+
+	cx := float32(w) / 2.0
+
+	headR := float32(2.0)
+	headCY := headR + 0.5
+	vector.DrawFilledCircle(
+		g.paratrooperLandedImage,
+		cx, headCY, headR,
+		config.ColourTeal, true,
 	)
-	g.paratrooperLandedImage.Fill(config.ColourTeal)
+
+	torsoW := float32(4.0)
+	torsoH := float32(6.0)
+	torsoX := cx - torsoW/2.0
+	torsoY := headCY + headR + 0.5
+	vector.DrawFilledRect(
+		g.paratrooperLandedImage,
+		torsoX, torsoY, torsoW, torsoH,
+		config.ColourTeal, false,
+	)
+
+	shoulderY := torsoY + 1.5
+	vector.StrokeLine(
+		g.paratrooperLandedImage,
+		torsoX, shoulderY,
+		1.0, torsoY+torsoH-1,
+		1.5, config.ColourTeal, false,
+	)
+	vector.StrokeLine(
+		g.paratrooperLandedImage,
+		torsoX+torsoW, shoulderY,
+		float32(w)-1.0, torsoY+torsoH-1,
+		1.5, config.ColourTeal, false,
+	)
+
+	hipY := torsoY + torsoH
+	vector.StrokeLine(
+		g.paratrooperLandedImage,
+		cx-1.0, hipY,
+		1.5, float32(h),
+		1.5, config.ColourTeal, false,
+	)
+	vector.StrokeLine(
+		g.paratrooperLandedImage,
+		cx+1.0, hipY,
+		float32(w)-1.5, float32(h),
+		1.5, config.ColourTeal, false,
+	)
 }
 
 func (g *Game) initParatrooperFellImage() {
-	g.paratrooperFellImage = ebiten.NewImage(
-		int(config.ParatrooperWidth),
-		int(config.ParatrooperHeight),
+	w := int(config.ParatrooperWidth)
+	h := int(config.ParatrooperHeight)
+	g.paratrooperFellImage = ebiten.NewImage(w, h)
+
+	cx := float32(w) / 2.0
+	clr := config.ColourLightGrey
+
+	headR := float32(2.0)
+	headCY := headR + 0.5
+	vector.DrawFilledCircle(
+		g.paratrooperFellImage,
+		cx, headCY, headR,
+		clr, true,
 	)
-	g.paratrooperFellImage.Fill(config.ColourLightGrey)
+
+	torsoW := float32(4.0)
+	torsoH := float32(6.0)
+	torsoX := cx - torsoW/2.0
+	torsoY := headCY + headR + 0.5
+	vector.DrawFilledRect(
+		g.paratrooperFellImage,
+		torsoX, torsoY, torsoW, torsoH,
+		clr, false,
+	)
+
+	shoulderY := torsoY + 1.5
+	vector.StrokeLine(
+		g.paratrooperFellImage,
+		torsoX, shoulderY,
+		0, torsoY+3,
+		1.5, clr, false,
+	)
+	vector.StrokeLine(
+		g.paratrooperFellImage,
+		torsoX+torsoW, shoulderY,
+		float32(w), torsoY+3,
+		1.5, clr, false,
+	)
+
+	hipY := torsoY + torsoH
+	vector.StrokeLine(
+		g.paratrooperFellImage,
+		cx-1.0, hipY,
+		0, float32(h),
+		1.5, clr, false,
+	)
+	vector.StrokeLine(
+		g.paratrooperFellImage,
+		cx+1.0, hipY,
+		float32(w), float32(h),
+		1.5, clr, false,
+	)
 }

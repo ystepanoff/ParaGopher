@@ -20,7 +20,7 @@ const (
 	HelicopterBodyHeight  = 10.0
 	HelicopterTailWidth   = 16.0
 	HelicopterTailHeight  = 3.0
-	HelicopterRotorLen    = 20.0
+	HelicopterRotorLen    = 36.0
 
 	ParatrooperSpawnChance = 0.008
 	ParatrooperFallSpeed   = 0.6
@@ -37,9 +37,9 @@ var (
 	BaseWidth  = float32(ScreenWidth) / 10.0
 	BaseHeight = float32(ScreenHeight) / 10.0
 
-	ParatrooperWidth  = float32(10.0)
+	ParatrooperWidth  = float32(12.0)
 	ParatrooperHeight = BaseHeight / 3.0
-	ParachuteRadius   = float32(10.0)
+	ParachuteRadius   = float32(14.0)
 
 	ColourTeal           = color.RGBA{R: 101, G: 247, B: 246, A: 255}
 	ColourPink           = color.RGBA{R: 255, G: 82, B: 242, A: 255}
