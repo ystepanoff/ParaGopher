@@ -100,48 +100,72 @@ func (g *Game) initBulletImage() {
 
 func (g *Game) initHelicopterImage() {
 	w := int(config.HelicopterBodyWidth + config.HelicopterTailWidth)
-	h := int(config.HelicopterBodyHeight) + 6
+	h := int(config.HelicopterBodyHeight) + 12
 	g.helicopterImage = ebiten.NewImage(w, h)
-	tailX := float32(0.0)
-	tailY := float32(h-config.HelicopterTailHeight) / 2
+
+	bodyTopY := float32(6)
+	bodyH := float32(config.HelicopterBodyHeight)
 	bodyX := float32(config.HelicopterTailWidth)
-	bodyY := float32(h-config.HelicopterBodyHeight) / 2
+	bodyBottomY := bodyTopY + bodyH
+	bodyCenterX := bodyX + float32(config.HelicopterBodyWidth)/2.0
 
+	tailMidY := bodyTopY + bodyH/2.0
 	vector.DrawFilledRect(
 		g.helicopterImage,
-		tailX,
-		tailY,
-		config.HelicopterTailWidth,
-		config.HelicopterTailHeight,
-		config.ColourTeal,
-		false,
+		0, tailMidY-float32(config.HelicopterTailHeight)/2.0,
+		float32(config.HelicopterTailWidth), float32(config.HelicopterTailHeight),
+		config.ColourTeal, false,
 	)
 
-	vector.DrawFilledRect(
-		g.helicopterImage,
-		bodyX,
-		bodyY,
-		config.HelicopterBodyWidth,
-		config.HelicopterBodyHeight,
-		config.ColourTeal,
-		false,
-	)
-
-	bodyCenterX := bodyX + config.HelicopterBodyWidth/2.0
-	bodyTopY := bodyY
-	rotorStartX := bodyCenterX - config.HelicopterRotorLen/2.0
-	rotorStartY := bodyTopY - 2.0
-	rotorEndX := bodyCenterX + config.HelicopterRotorLen/2.0
-	rotorEndY := rotorStartY
 	vector.StrokeLine(
 		g.helicopterImage,
-		rotorStartX,
-		rotorStartY,
-		rotorEndX,
-		rotorEndY,
-		1.0,
-		config.ColourMagenta,
-		false,
+		1, tailMidY-4, 1, tailMidY+4,
+		1.0, config.ColourMagenta, false,
+	)
+
+	vector.DrawFilledRect(
+		g.helicopterImage,
+		bodyX, bodyTopY,
+		float32(config.HelicopterBodyWidth), bodyH,
+		config.ColourTeal, false,
+	)
+
+	cockpitX := bodyX + float32(config.HelicopterBodyWidth) - 9
+	vector.DrawFilledRect(
+		g.helicopterImage,
+		cockpitX, bodyTopY+2, 7, bodyH-4,
+		config.ColourPink, false,
+	)
+
+	vector.StrokeLine(
+		g.helicopterImage,
+		bodyCenterX, 1, bodyCenterX, bodyTopY,
+		1.5, config.ColourTeal, false,
+	)
+
+	vector.DrawFilledCircle(
+		g.helicopterImage,
+		bodyCenterX, 1, 1.5,
+		config.ColourTeal, true,
+	)
+
+	strutL := bodyX + 5
+	strutR := bodyX + float32(config.HelicopterBodyWidth) - 5
+	skidY := bodyBottomY + 4
+	vector.StrokeLine(
+		g.helicopterImage,
+		strutL, bodyBottomY, strutL, skidY,
+		1.0, config.ColourTeal, false,
+	)
+	vector.StrokeLine(
+		g.helicopterImage,
+		strutR, bodyBottomY, strutR, skidY,
+		1.0, config.ColourTeal, false,
+	)
+	vector.StrokeLine(
+		g.helicopterImage,
+		strutL-2, skidY, strutR+2, skidY,
+		1.0, config.ColourTeal, false,
 	)
 }
 
