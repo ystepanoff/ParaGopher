@@ -28,7 +28,14 @@ for some platforms.
 * Left Arrow (`←`): Rotate turret barrel to the left.
 * Right Arrow (`→`): Rotate turret barrel to the right.
 * Space: Shoot bullets from the turret.
+* R: Open the resolution menu.
 * Escape (`Esc`): Quit the game.
+
+### Resolution menu
+* Up/Down Arrows: Navigate resolution options.
+* Enter: Apply the selected resolution.
+* F: Toggle fullscreen mode.
+* Escape (`Esc`) / R: Close the menu.
 
 ## Contributions
 Contributions are welcome! Whether it is reporting bugs, suggesting features, or submitting pull requests, your help is appreciated.
