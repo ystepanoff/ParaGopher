@@ -16,10 +16,11 @@ import (
 const (
 	introText = "P A R A G O P H E R"
 
-	introSkipText = "ENTER: skip intro"
-	rotateText    = "LEFT (←), RIGHT (→): rotate barrel"
-	shootText     = "SPACE: shoot bullets"
-	exitText      = "ESCAPE: exit the game"
+	introSkipText  = "ENTER: skip intro"
+	rotateText     = "LEFT (←), RIGHT (→): rotate barrel"
+	shootText      = "SPACE: shoot bullets"
+	resolutionText = "R: change resolution"
+	exitText       = "ESCAPE: exit the game"
 
 	scaleFactor = 4
 )
@@ -67,6 +68,7 @@ func (g *Game) drawIntro(screen *ebiten.Image) {
 		introSkipText,
 		rotateText,
 		shootText,
+		resolutionText,
 		exitText,
 	}
 
@@ -99,7 +101,7 @@ func (g *Game) drawIntro(screen *ebiten.Image) {
 		g.lastIntroStep = time.Now()
 	}
 
-	if ebiten.IsKeyPressed(ebiten.KeyEnter) || g.isIntroFinished() {
+	if !g.showResolutionMenu && (ebiten.IsKeyPressed(ebiten.KeyEnter) || g.isIntroFinished()) {
 		g.soundProfile.IntroPlayer.Close()
 		g.showIntro = false
 	}

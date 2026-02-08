@@ -33,6 +33,22 @@ const (
 	GroundY = 600
 )
 
+type Resolution struct {
+	Width  int
+	Height int
+	Label  string
+}
+
+var Resolutions = []Resolution{
+	{640, 480, "640 x 480"},
+	{800, 600, "800 x 600"},
+	{1024, 768, "1024 x 768"},
+	{1280, 960, "1280 x 960"},
+	{1600, 1200, "1600 x 1200"},
+}
+
+const DefaultResolutionIdx = 1
+
 var (
 	BaseWidth  = float32(ScreenWidth) / 10.0
 	BaseHeight = float32(ScreenHeight) / 10.0

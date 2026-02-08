@@ -7,6 +7,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 	"github.com/ystepanoff/paragopher/internal/audio"
 	"github.com/ystepanoff/paragopher/internal/config"
@@ -24,6 +25,11 @@ type Game struct {
 
 	showExitDialog     bool
 	showGameOverDialog bool
+	showResolutionMenu bool
+
+	resolutionMenuIdx    int
+	currentResolutionIdx int
+	fullscreen           bool
 
 	barrelAngle            float64
 	barrelImage            *ebiten.Image
@@ -47,11 +53,13 @@ func NewGame() *Game {
 		gameData = &utils.GameData{}
 	}
 	game := &Game{
-		bullets:      make([]*Bullet, 0),
-		lastShot:     time.Now(),
-		gameData:     gameData,
-		soundProfile: audio.NewSoundProfile(),
-		showIntro:    true,
+		bullets:              make([]*Bullet, 0),
+		lastShot:             time.Now(),
+		gameData:             gameData,
+		soundProfile:         audio.NewSoundProfile(),
+		showIntro:            true,
+		resolutionMenuIdx:    config.DefaultResolutionIdx,
+		currentResolutionIdx: config.DefaultResolutionIdx,
 	}
 	game.initTurretImage()
 	game.initBarrelImage()
@@ -69,6 +77,9 @@ func NewGame() *Game {
 func (g *Game) Draw(screen *ebiten.Image) {
 	if g.showIntro {
 		g.drawIntro(screen)
+		if g.showResolutionMenu {
+			g.drawResolutionMenu(screen)
+		}
 		return
 	}
 	g.drawTurret(screen)
@@ -89,9 +100,23 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	if g.showGameOverDialog {
 		showYesNoDialog(screen, "GAME OVER!\nWould you like to start again?")
 	}
+
+	if g.showResolutionMenu {
+		g.drawResolutionMenu(screen)
+	}
 }
 
 func (g *Game) Update() error {
+	if g.showResolutionMenu {
+		g.updateResolutionMenu()
+		return nil
+	}
+	if inpututil.IsKeyJustPressed(ebiten.KeyR) &&
+		!g.showExitDialog && !g.showGameOverDialog {
+		g.resolutionMenuIdx = g.currentResolutionIdx
+		g.showResolutionMenu = true
+		return nil
+	}
 	if g.showIntro {
 		return nil
 	}
