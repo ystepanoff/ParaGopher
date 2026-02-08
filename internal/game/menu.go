@@ -28,12 +28,18 @@ func (g *Game) updateResolutionMenu() {
 		if g.fullscreen {
 			g.fullscreen = false
 			ebiten.SetFullscreen(false)
+			ebiten.SetCursorMode(ebiten.CursorModeVisible)
 		}
 		g.showResolutionMenu = false
 	}
 	if inpututil.IsKeyJustPressed(ebiten.KeyF) {
 		g.fullscreen = !g.fullscreen
 		ebiten.SetFullscreen(g.fullscreen)
+		if g.fullscreen {
+			ebiten.SetCursorMode(ebiten.CursorModeHidden)
+		} else {
+			ebiten.SetCursorMode(ebiten.CursorModeVisible)
+		}
 		g.showResolutionMenu = false
 	}
 	if inpututil.IsKeyJustPressed(ebiten.KeyEscape) ||
